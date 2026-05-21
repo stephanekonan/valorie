@@ -76,7 +76,7 @@ function ProductPage() {
             <div className="mb-6">
               <p className="text-xs uppercase tracking-luxury mb-3">Couleur : <span className="text-muted-foreground normal-case tracking-normal">{color}</span></p>
               <div className="flex gap-2">
-                {product.colors.map((c) => (
+                {product.colors.map((c: string) => (
                   <button
                     key={c}
                     onClick={() => setColor(c)}
@@ -93,7 +93,7 @@ function ProductPage() {
             <div className="mb-6">
               <p className="text-xs uppercase tracking-luxury mb-3">Taille</p>
               <div className="flex gap-2">
-                {product.sizes.map((s) => (
+                {product.sizes.map((s: string) => (
                   <button
                     key={s}
                     onClick={() => setSize(s)}
