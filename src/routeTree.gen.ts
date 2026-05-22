@@ -9,9 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RechercheRouteImport } from './routes/recherche'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as ModeRouteImport } from './routes/mode'
 import { Route as FemmeRouteImport } from './routes/femme'
+import { Route as FavorisRouteImport } from './routes/favoris'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CosmetiqueRouteImport } from './routes/cosmetique'
 import { Route as AProposRouteImport } from './routes/a-propos'
@@ -22,6 +24,11 @@ import { Route as SacsFemmeCNoirRouteImport } from './routes/sacs-femme.c.noir'
 import { Route as SacsFemmeCColorRouteImport } from './routes/sacs-femme.c.$color'
 import { Route as FemmeSacsCColorRouteImport } from './routes/femme.sacs.c.$color'
 
+const RechercheRoute = RechercheRouteImport.update({
+  id: '/recherche',
+  path: '/recherche',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
   path: '/panier',
@@ -35,6 +42,11 @@ const ModeRoute = ModeRouteImport.update({
 const FemmeRoute = FemmeRouteImport.update({
   id: '/femme',
   path: '/femme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavorisRoute = FavorisRouteImport.update({
+  id: '/favoris',
+  path: '/favoris',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -88,9 +100,11 @@ export interface FileRoutesByFullPath {
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
   '/dashboard': typeof DashboardRoute
+  '/favoris': typeof FavorisRoute
   '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/recherche': typeof RechercheRoute
   '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
   '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
@@ -102,9 +116,11 @@ export interface FileRoutesByTo {
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
   '/dashboard': typeof DashboardRoute
+  '/favoris': typeof FavorisRoute
   '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/recherche': typeof RechercheRoute
   '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
   '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
@@ -117,9 +133,11 @@ export interface FileRoutesById {
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
   '/dashboard': typeof DashboardRoute
+  '/favoris': typeof FavorisRoute
   '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/recherche': typeof RechercheRoute
   '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
   '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
@@ -133,9 +151,11 @@ export interface FileRouteTypes {
     | '/a-propos'
     | '/cosmetique'
     | '/dashboard'
+    | '/favoris'
     | '/femme'
     | '/mode'
     | '/panier'
+    | '/recherche'
     | '/femme/sacs'
     | '/produit/$id'
     | '/sacs-femme/c/$color'
@@ -147,9 +167,11 @@ export interface FileRouteTypes {
     | '/a-propos'
     | '/cosmetique'
     | '/dashboard'
+    | '/favoris'
     | '/femme'
     | '/mode'
     | '/panier'
+    | '/recherche'
     | '/femme/sacs'
     | '/produit/$id'
     | '/sacs-femme/c/$color'
@@ -161,9 +183,11 @@ export interface FileRouteTypes {
     | '/a-propos'
     | '/cosmetique'
     | '/dashboard'
+    | '/favoris'
     | '/femme'
     | '/mode'
     | '/panier'
+    | '/recherche'
     | '/femme/sacs'
     | '/produit/$id'
     | '/sacs-femme/c/$color'
@@ -176,9 +200,11 @@ export interface RootRouteChildren {
   AProposRoute: typeof AProposRoute
   CosmetiqueRoute: typeof CosmetiqueRoute
   DashboardRoute: typeof DashboardRoute
+  FavorisRoute: typeof FavorisRoute
   FemmeRoute: typeof FemmeRouteWithChildren
   ModeRoute: typeof ModeRoute
   PanierRoute: typeof PanierRoute
+  RechercheRoute: typeof RechercheRoute
   ProduitIdRoute: typeof ProduitIdRoute
   SacsFemmeCColorRoute: typeof SacsFemmeCColorRoute
   SacsFemmeCNoirRoute: typeof SacsFemmeCNoirRoute
@@ -186,6 +212,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recherche': {
+      id: '/recherche'
+      path: '/recherche'
+      fullPath: '/recherche'
+      preLoaderRoute: typeof RechercheRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/panier': {
       id: '/panier'
       path: '/panier'
@@ -205,6 +238,13 @@ declare module '@tanstack/react-router' {
       path: '/femme'
       fullPath: '/femme'
       preLoaderRoute: typeof FemmeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoris': {
+      id: '/favoris'
+      path: '/favoris'
+      fullPath: '/favoris'
+      preLoaderRoute: typeof FavorisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -300,9 +340,11 @@ const rootRouteChildren: RootRouteChildren = {
   AProposRoute: AProposRoute,
   CosmetiqueRoute: CosmetiqueRoute,
   DashboardRoute: DashboardRoute,
+  FavorisRoute: FavorisRoute,
   FemmeRoute: FemmeRouteWithChildren,
   ModeRoute: ModeRoute,
   PanierRoute: PanierRoute,
+  RechercheRoute: RechercheRoute,
   ProduitIdRoute: ProduitIdRoute,
   SacsFemmeCColorRoute: SacsFemmeCColorRoute,
   SacsFemmeCNoirRoute: SacsFemmeCNoirRoute,

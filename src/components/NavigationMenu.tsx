@@ -12,6 +12,7 @@ import { Link } from "@tanstack/react-router";
 export type NavItem = {
   label: string;
   href: string;
+  search?: Record<string, string>;
   description?: string;
 };
 
@@ -33,9 +34,9 @@ const navigationItems: NavCategory[] = [
         title: "Vêtements",
         items: [
           { label: "Tous les articles", href: "/femme", description: "Découvrir toute la collection" },
-          { label: "Robes", href: "/femme" },
-          { label: "Tops & Chemises", href: "/femme" },
-          { label: "Pantalons", href: "/femme" },
+          { label: "Robes", href: "/femme", search: { sub: "femme" } },
+          { label: "Tops & Chemises", href: "/femme", search: { sub: "femme" } },
+          { label: "Pantalons", href: "/femme", search: { sub: "femme" } },
         ],
       },
       {
@@ -56,8 +57,8 @@ const navigationItems: NavCategory[] = [
       {
         items: [
           { label: "Tous les articles", href: "/mode", description: "Explorer la collection mode" },
-          { label: "Vêtements", href: "/mode" },
-          { label: "Accessoires", href: "/mode" },
+          { label: "Vêtements", href: "/femme" },
+          { label: "Accessoires", href: "/mode", search: { sub: "accessoires" } },
           { label: "Nouveautés", href: "/mode" },
         ],
       },
@@ -70,9 +71,9 @@ const navigationItems: NavCategory[] = [
       {
         items: [
           { label: "Tous les articles", href: "/cosmetique", description: "Nos soins & cosmétiques" },
-          { label: "Soin visage", href: "/cosmetique" },
-          { label: "Soin corps", href: "/cosmetique" },
-          { label: "Maquillage", href: "/cosmetique" },
+          { label: "Soin visage", href: "/cosmetique", search: { sub: "visage" } },
+          { label: "Soin corps", href: "/cosmetique", search: { sub: "corps" } },
+          { label: "Maquillage", href: "/cosmetique", search: { sub: "maquillage" } },
         ],
       },
     ],
@@ -110,7 +111,8 @@ export function NavigationMenu() {
                           <NavigationMenuLink asChild>
                             <Link
                               to={item.href}
-                              className="group block select-none rounded-sm px-3 py-2.5 leading-none no-underline outline-none transition-colors hover:bg-accent/50 focus:bg-accent/50"
+                              search={(item.search || {}) as any}
+                              className="group block select-none rounded-sm px-3 py-2.5 leading-none no-underline outline-none transition-colors hover:bg-accent/50 focus:bg-accent/50 cursor-pointer"
                             >
                               <span className="text-sm font-medium leading-none text-foreground group-hover:text-foreground">
                                 {item.label}
@@ -134,7 +136,7 @@ export function NavigationMenu() {
                 <NavigationMenuLink asChild>
                   <Link
                     to={category.href}
-                    className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider"
+                    className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors uppercase tracking-wider cursor-pointer"
                   >
                     Voir tout {category.label} →
                   </Link>

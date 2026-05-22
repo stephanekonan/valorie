@@ -21,8 +21,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
+import { useFavorites } from "@/lib/favorites";
 
 import {
   navigationItems,
@@ -31,10 +32,12 @@ import {
 
 export function Header() {
   const { totalItems } = useCart();
+  const { totalFavorites } = useFavorites();
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -109,12 +112,18 @@ export function Header() {
             </Link>
 
             {/* Wishlist */}
-            <button
+            <Link
+              to="/favoris"
               aria-label="Favoris"
-              className="hidden sm:flex p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
+              className="relative hidden sm:flex p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
             >
               <Heart className="h-4.5 w-4.5" />
-            </button>
+              {totalFavorites > 0 && (
+                <span className="absolute top-0.5 right-0.5 bg-rose-500 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center leading-none">
+                  {totalFavorites}
+                </span>
+              )}
+            </Link>
 
             {/* Cart */}
             <Link
@@ -155,10 +164,16 @@ export function Header() {
               type="search"
               placeholder="Rechercher un produit, une catégorie..."
               autoFocus={searchOpen}
-              className="w-full pl-10 pr-4 py-2.5 bg-secondary/50 border border-border/30 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 rounded-sm transition-all duration-200 placeholder:text-muted-foreground/70"
-              onBlur={() => {
-                /* keep open, user closes with X */
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const q = e.currentTarget.value.trim();
+                  if (q) {
+                    navigate({ to: "/recherche", search: { q } });
+                    setSearchOpen(false);
+                  }
+                }
               }}
+              className="w-full pl-10 pr-4 py-2.5 bg-secondary/50 border border-border/30 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 rounded-sm transition-all duration-200 placeholder:text-muted-foreground/70"
             />
           </div>
         </div>
@@ -174,7 +189,7 @@ export function Header() {
                 onClick={() => setMobileOpen(false)}
                 className="text-lg font-bold tracking-[0.25em] uppercase font-serif"
               >
-                Édène
+                Valorie
               </Link>
             </SheetTitle>
           </SheetHeader>
@@ -184,7 +199,6 @@ export function Header() {
             <div className="space-y-1 px-4">
               {navigationItems.map((category) => (
                 <div key={category.label}>
-                  {/* Category header */}
                   <button
                     onClick={() => toggleMobileCategory(category.label)}
                     className="w-full flex items-center justify-between px-3 py-3 text-sm font-medium uppercase tracking-wider text-foreground hover:bg-secondary/50 rounded-sm transition-colors duration-200"
@@ -197,7 +211,6 @@ export function Header() {
                     />
                   </button>
 
-                  {/* Expandable sub-items */}
                   <div
                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                       expandedMobile === category.label
@@ -217,6 +230,7 @@ export function Header() {
                             <SheetClose key={item.label} asChild>
                               <Link
                                 to={item.href}
+                                search={(item.search || {}) as any}
                                 className="block px-3 py-2 text-sm text-foreground/75 hover:text-foreground hover:bg-secondary/40 rounded-sm transition-colors duration-200"
                               >
                                 {item.label}
@@ -225,7 +239,6 @@ export function Header() {
                           ))}
                         </div>
                       ))}
-                      {/* View all link */}
                       <SheetClose asChild>
                         <Link
                           to={category.href}
@@ -239,7 +252,6 @@ export function Header() {
                 </div>
               ))}
 
-              {/* Simple link */}
               <SheetClose asChild>
                 <Link
                   to="/a-propos"
@@ -261,10 +273,19 @@ export function Header() {
               <User className="h-4 w-4" />
               Tableau de bord
             </Link>
-            <button className="flex items-center gap-3 text-sm text-foreground/80 hover:text-foreground transition-colors">
+            <Link
+              to="/favoris"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 text-sm text-foreground/80 hover:text-foreground transition-colors"
+            >
               <Heart className="h-4 w-4" />
               Mes favoris
-            </button>
+              {totalFavorites > 0 && (
+                <span className="ml-auto bg-rose-500 text-white text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                  {totalFavorites}
+                </span>
+              )}
+            </Link>
           </div>
         </SheetContent>
       </Sheet>

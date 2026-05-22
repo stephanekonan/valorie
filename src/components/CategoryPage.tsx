@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { Link } from "@tanstack/react-router";
+import { Link, useSearch, useNavigate } from "@tanstack/react-router";
 
 import type { Product } from "@/lib/products";
 
@@ -23,7 +23,21 @@ export function CategoryPage({
   products,
   selectedColor,
 }: Props) {
-  const [sub, setSub] = useState<string>("all");
+  const search: any = useSearch({ strict: false });
+  const navigate = useNavigate();
+  const [sub, setSub] = useState<string>(search.sub || "all");
+
+  useEffect(() => {
+    if (search.sub) {
+      setSub(search.sub);
+    }
+  }, [search.sub]);
+
+  const handleSubChange = (newSub: string) => {
+    setSub(newSub);
+    navigate({ search: { ...search, sub: newSub } as any, replace: true });
+  };
+
   const filtered = sub === "all" ? products : products.filter((p) => p.subcategory === sub);
   const prices = filtered.map((p) => p.price);
   const minPrice = prices.length ? Math.min(...prices) : 0;
@@ -41,7 +55,7 @@ export function CategoryPage({
       <section className="container mx-auto px-6 py-10">
         <div className="flex flex-wrap items-center gap-2 mb-8">
           <button
-            onClick={() => setSub("all")}
+            onClick={() => handleSubChange("all")}
             className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
               sub === "all"
                 ? "bg-primary text-primary-foreground border-primary"
@@ -65,7 +79,7 @@ export function CategoryPage({
                 </Link>
               ) : (
                 <button
-                  onClick={() => setSub(s.id)}
+                  onClick={() => handleSubChange(s.id)}
                   className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
                     sub === s.id
                       ? "bg-primary text-primary-foreground border-primary"
@@ -108,7 +122,7 @@ export function CategoryPage({
                   {subcategories.map((s) => (
                     <button
                       key={s.id}
-                      onClick={() => setSub(s.id)}
+                      onClick={() => handleSubChange(s.id)}
                       className="block hover:text-foreground"
                     >
                       {s.label}
