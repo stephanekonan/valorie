@@ -5,10 +5,13 @@ export function Newsletter() {
         <p className="text-xs uppercase tracking-luxury mb-3">Rejoignez la Maison</p>
         <h2 className="text-4xl md:text-5xl mb-4">Inspirations & privilèges</h2>
         <p className="text-muted-foreground mb-8">
-          Recevez <strong className="text-foreground">-10% sur votre première commande</strong> et accédez en avant-première à nos nouveautés et événements.
+          Recevez <strong className="text-foreground">-10% sur votre première commande</strong> et
+          accédez en avant-première à nos nouveautés et événements.
         </p>
         <form
-          onSubmit={(e) => { e.preventDefault(); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
           className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
         >
           <input

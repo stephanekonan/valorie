@@ -11,10 +11,16 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PanierRouteImport } from './routes/panier'
 import { Route as ModeRouteImport } from './routes/mode'
+import { Route as FemmeRouteImport } from './routes/femme'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CosmetiqueRouteImport } from './routes/cosmetique'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProduitIdRouteImport } from './routes/produit.$id'
+import { Route as FemmeSacsRouteImport } from './routes/femme.sacs'
+import { Route as SacsFemmeCNoirRouteImport } from './routes/sacs-femme.c.noir'
+import { Route as SacsFemmeCColorRouteImport } from './routes/sacs-femme.c.$color'
+import { Route as FemmeSacsCColorRouteImport } from './routes/femme.sacs.c.$color'
 
 const PanierRoute = PanierRouteImport.update({
   id: '/panier',
@@ -24,6 +30,16 @@ const PanierRoute = PanierRouteImport.update({
 const ModeRoute = ModeRouteImport.update({
   id: '/mode',
   path: '/mode',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FemmeRoute = FemmeRouteImport.update({
+  id: '/femme',
+  path: '/femme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CosmetiqueRoute = CosmetiqueRouteImport.update({
@@ -46,31 +62,69 @@ const ProduitIdRoute = ProduitIdRouteImport.update({
   path: '/produit/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FemmeSacsRoute = FemmeSacsRouteImport.update({
+  id: '/sacs',
+  path: '/sacs',
+  getParentRoute: () => FemmeRoute,
+} as any)
+const SacsFemmeCNoirRoute = SacsFemmeCNoirRouteImport.update({
+  id: '/sacs-femme/c/noir',
+  path: '/sacs-femme/c/noir',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SacsFemmeCColorRoute = SacsFemmeCColorRouteImport.update({
+  id: '/sacs-femme/c/$color',
+  path: '/sacs-femme/c/$color',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FemmeSacsCColorRoute = FemmeSacsCColorRouteImport.update({
+  id: '/c/$color',
+  path: '/c/$color',
+  getParentRoute: () => FemmeSacsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
+  '/dashboard': typeof DashboardRoute
+  '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
+  '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
+  '/sacs-femme/c/noir': typeof SacsFemmeCNoirRoute
+  '/femme/sacs/c/$color': typeof FemmeSacsCColorRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
+  '/dashboard': typeof DashboardRoute
+  '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
+  '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
+  '/sacs-femme/c/noir': typeof SacsFemmeCNoirRoute
+  '/femme/sacs/c/$color': typeof FemmeSacsCColorRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/cosmetique': typeof CosmetiqueRoute
+  '/dashboard': typeof DashboardRoute
+  '/femme': typeof FemmeRouteWithChildren
   '/mode': typeof ModeRoute
   '/panier': typeof PanierRoute
+  '/femme/sacs': typeof FemmeSacsRouteWithChildren
   '/produit/$id': typeof ProduitIdRoute
+  '/sacs-femme/c/$color': typeof SacsFemmeCColorRoute
+  '/sacs-femme/c/noir': typeof SacsFemmeCNoirRoute
+  '/femme/sacs/c/$color': typeof FemmeSacsCColorRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -78,28 +132,56 @@ export interface FileRouteTypes {
     | '/'
     | '/a-propos'
     | '/cosmetique'
+    | '/dashboard'
+    | '/femme'
     | '/mode'
     | '/panier'
+    | '/femme/sacs'
     | '/produit/$id'
+    | '/sacs-femme/c/$color'
+    | '/sacs-femme/c/noir'
+    | '/femme/sacs/c/$color'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a-propos' | '/cosmetique' | '/mode' | '/panier' | '/produit/$id'
+  to:
+    | '/'
+    | '/a-propos'
+    | '/cosmetique'
+    | '/dashboard'
+    | '/femme'
+    | '/mode'
+    | '/panier'
+    | '/femme/sacs'
+    | '/produit/$id'
+    | '/sacs-femme/c/$color'
+    | '/sacs-femme/c/noir'
+    | '/femme/sacs/c/$color'
   id:
     | '__root__'
     | '/'
     | '/a-propos'
     | '/cosmetique'
+    | '/dashboard'
+    | '/femme'
     | '/mode'
     | '/panier'
+    | '/femme/sacs'
     | '/produit/$id'
+    | '/sacs-femme/c/$color'
+    | '/sacs-femme/c/noir'
+    | '/femme/sacs/c/$color'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AProposRoute: typeof AProposRoute
   CosmetiqueRoute: typeof CosmetiqueRoute
+  DashboardRoute: typeof DashboardRoute
+  FemmeRoute: typeof FemmeRouteWithChildren
   ModeRoute: typeof ModeRoute
   PanierRoute: typeof PanierRoute
   ProduitIdRoute: typeof ProduitIdRoute
+  SacsFemmeCColorRoute: typeof SacsFemmeCColorRoute
+  SacsFemmeCNoirRoute: typeof SacsFemmeCNoirRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +198,20 @@ declare module '@tanstack/react-router' {
       path: '/mode'
       fullPath: '/mode'
       preLoaderRoute: typeof ModeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/femme': {
+      id: '/femme'
+      path: '/femme'
+      fullPath: '/femme'
+      preLoaderRoute: typeof FemmeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cosmetique': {
@@ -146,17 +242,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProduitIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/femme/sacs': {
+      id: '/femme/sacs'
+      path: '/sacs'
+      fullPath: '/femme/sacs'
+      preLoaderRoute: typeof FemmeSacsRouteImport
+      parentRoute: typeof FemmeRoute
+    }
+    '/sacs-femme/c/noir': {
+      id: '/sacs-femme/c/noir'
+      path: '/sacs-femme/c/noir'
+      fullPath: '/sacs-femme/c/noir'
+      preLoaderRoute: typeof SacsFemmeCNoirRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sacs-femme/c/$color': {
+      id: '/sacs-femme/c/$color'
+      path: '/sacs-femme/c/$color'
+      fullPath: '/sacs-femme/c/$color'
+      preLoaderRoute: typeof SacsFemmeCColorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/femme/sacs/c/$color': {
+      id: '/femme/sacs/c/$color'
+      path: '/c/$color'
+      fullPath: '/femme/sacs/c/$color'
+      preLoaderRoute: typeof FemmeSacsCColorRouteImport
+      parentRoute: typeof FemmeSacsRoute
+    }
   }
 }
+
+interface FemmeSacsRouteChildren {
+  FemmeSacsCColorRoute: typeof FemmeSacsCColorRoute
+}
+
+const FemmeSacsRouteChildren: FemmeSacsRouteChildren = {
+  FemmeSacsCColorRoute: FemmeSacsCColorRoute,
+}
+
+const FemmeSacsRouteWithChildren = FemmeSacsRoute._addFileChildren(
+  FemmeSacsRouteChildren,
+)
+
+interface FemmeRouteChildren {
+  FemmeSacsRoute: typeof FemmeSacsRouteWithChildren
+}
+
+const FemmeRouteChildren: FemmeRouteChildren = {
+  FemmeSacsRoute: FemmeSacsRouteWithChildren,
+}
+
+const FemmeRouteWithChildren = FemmeRoute._addFileChildren(FemmeRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AProposRoute: AProposRoute,
   CosmetiqueRoute: CosmetiqueRoute,
+  DashboardRoute: DashboardRoute,
+  FemmeRoute: FemmeRouteWithChildren,
   ModeRoute: ModeRoute,
   PanierRoute: PanierRoute,
   ProduitIdRoute: ProduitIdRoute,
+  SacsFemmeCColorRoute: SacsFemmeCColorRoute,
+  SacsFemmeCNoirRoute: SacsFemmeCNoirRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

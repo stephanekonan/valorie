@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -44,7 +45,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">Veuillez réessayer.</p>
         <div className="mt-6 flex justify-center gap-2">
           <button
-            onClick={() => { router.invalidate(); reset(); }}
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
             className="bg-primary px-6 py-3 text-xs uppercase tracking-luxury text-primary-foreground"
           >
             Réessayer
@@ -63,9 +67,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Maison Édène — Mode & Cosmétique" },
-      { name: "description", content: "Maison Édène, l'art du raffinement : mode et cosmétique pour célébrer la beauté du quotidien." },
-      { property: "og:title", content: "Maison Édène" },
+      { title: "Valorie - Mode & Cosmétique" },
+      {
+        name: "description",
+        content:
+          "Valorie, l'art du raffinement : mode et cosmétique pour célébrer la beauté du quotidien.",
+      },
+      { property: "og:title", content: "Valorie" },
       { property: "og:description", content: "Mode et cosmétique d'inspiration parisienne." },
       { property: "og:type", content: "website" },
     ],
@@ -80,7 +88,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <head><HeadContent /></head>
+      <head>
+        <HeadContent />
+      </head>
       <body>
         {children}
         <Scripts />
@@ -94,6 +104,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen flex flex-col">
+        <Toaster position="top-right" richColors />
         <Header />
         <main className="flex-1">
           <Outlet />

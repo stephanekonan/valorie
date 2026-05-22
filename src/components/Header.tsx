@@ -1,10 +1,40 @@
+import {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  ChevronDown,
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  User,
+  X,
+} from "lucide-react";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Link } from "@tanstack/react-router";
-import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useCart } from "@/lib/cart";
+
+import {
+  navigationItems,
+  NavigationMenu,
+} from "./NavigationMenu";
 
 export function Header() {
+  const { totalItems } = useCart();
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -12,81 +42,232 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close search on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    if (searchOpen) {
+      window.addEventListener("keydown", onKey);
+      return () => window.removeEventListener("keydown", onKey);
+    }
+  }, [searchOpen]);
+
+  const toggleMobileCategory = useCallback((label: string) => {
+    setExpandedMobile((prev) => (prev === label ? null : label));
+  }, []);
+
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-background"
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-white/97 shadow-[0_1px_3px_rgba(0,0,0,0.05)] backdrop-blur-md"
+          : "bg-white"
       }`}
     >
-      <div className="border-b border-border/50">
-        <div className="container mx-auto px-6 py-2 text-center text-xs tracking-luxury uppercase text-muted-foreground">
+      {/* ─── Promo Banner ─── */}
+      <div className="bg-foreground text-background overflow-hidden">
+        <div className="container mx-auto px-6 py-2 text-center text-[10.5px] tracking-[0.18em] uppercase font-medium">
           Livraison offerte dès 80€ — Retours gratuits sous 30 jours
         </div>
       </div>
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between py-5">
-          <button
-            className="md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Menu"
+
+      {/* ─── Main Header Bar ─── */}
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex items-center h-14 md:h-16 gap-6">
+          {/* Left: Logo */}
+          <Link
+            to="/"
+            className="text-lg md:text-xl font-bold tracking-[0.25em] uppercase text-foreground hover:opacity-70 transition-opacity duration-300 shrink-0 font-serif"
           >
-            <Menu className="h-5 w-5" />
-          </button>
-
-          <nav className="hidden md:flex items-center gap-8 text-sm tracking-wider uppercase">
-            <Link to="/mode" className="hover:text-accent-foreground transition-colors" activeProps={{ className: "text-accent-foreground" }}>
-              Mode
-            </Link>
-            <Link to="/cosmetique" className="hover:text-accent-foreground transition-colors">
-              Cosmétique
-            </Link>
-            <Link to="/a-propos" className="hover:text-accent-foreground transition-colors">
-              À propos
-            </Link>
-          </nav>
-
-          <Link to="/" className="font-serif text-3xl md:text-4xl tracking-tight">
-            Maison Édène
+            Valorie
           </Link>
 
-          <div className="flex items-center gap-4">
-            <button aria-label="Recherche" className="hover:text-accent-foreground transition-colors hidden sm:block">
-              <Search className="h-5 w-5" />
+          {/* Center: Desktop Navigation */}
+          <div className="hidden lg:flex flex-1 justify-center">
+            <NavigationMenu />
+          </div>
+
+          {/* Right: Action Icons */}
+          <div className="flex items-center gap-1 md:gap-1.5 ml-auto">
+            {/* Search toggle */}
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              aria-label="Rechercher"
+              className="relative p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
+            >
+              {searchOpen ? <X className="h-4.5 w-4.5" /> : <Search className="h-4.5 w-4.5" />}
             </button>
-            <button aria-label="Compte" className="hover:text-accent-foreground transition-colors hidden sm:block">
-              <User className="h-5 w-5" />
-            </button>
-            <button aria-label="Favoris" className="hover:text-accent-foreground transition-colors">
-              <Heart className="h-5 w-5" />
-            </button>
-            <Link to="/panier" aria-label="Panier" className="relative hover:text-accent-foreground transition-colors">
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-2 bg-primary text-primary-foreground text-[10px] rounded-full h-4 w-4 flex items-center justify-center">
-                2
-              </span>
+
+            {/* Account */}
+            <Link
+              to="/dashboard"
+              aria-label="Tableau de bord"
+              className="hidden sm:flex p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
+            >
+              <User className="h-4.5 w-4.5" />
             </Link>
+
+            {/* Wishlist */}
+            <button
+              aria-label="Favoris"
+              className="hidden sm:flex p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
+            >
+              <Heart className="h-4.5 w-4.5" />
+            </button>
+
+            {/* Cart */}
+            <Link
+              to="/panier"
+              aria-label="Panier"
+              className="relative p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70"
+            >
+              <ShoppingBag className="h-4.5 w-4.5" />
+              {totalItems > 0 && (
+                <span className="absolute top-0.5 right-0.5 bg-foreground text-background text-[9px] font-bold rounded-full h-4 w-4 flex items-center justify-center leading-none">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+
+            {/* Mobile hamburger */}
+            <button
+              className="lg:hidden p-2.5 text-foreground/70 hover:text-foreground transition-colors duration-200 rounded-full hover:bg-secondary/70 ml-0.5"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Menu"
+            >
+              <Menu className="h-4.5 w-4.5" />
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="hidden md:block pb-4">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      {/* ─── Search Overlay ─── */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out border-t border-border/30 ${
+          searchOpen ? "max-h-24 opacity-100" : "max-h-0 opacity-0 border-t-0"
+        }`}
+      >
+        <div className="container mx-auto px-4 md:px-6 py-3">
+          <div className="relative max-w-lg mx-auto">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
               type="search"
-              placeholder="Rechercher un produit, une marque..."
-              className="w-full pl-10 pr-4 py-2 bg-secondary border-0 text-sm focus:outline-none focus:ring-1 focus:ring-ring rounded-sm"
+              placeholder="Rechercher un produit, une catégorie..."
+              autoFocus={searchOpen}
+              className="w-full pl-10 pr-4 py-2.5 bg-secondary/50 border border-border/30 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 rounded-sm transition-all duration-200 placeholder:text-muted-foreground/70"
+              onBlur={() => {
+                /* keep open, user closes with X */
+              }}
             />
           </div>
         </div>
-
-        {mobileOpen && (
-          <nav className="md:hidden pb-4 flex flex-col gap-3 text-sm uppercase tracking-wider">
-            <Link to="/mode" onClick={() => setMobileOpen(false)}>Mode</Link>
-            <Link to="/cosmetique" onClick={() => setMobileOpen(false)}>Cosmétique</Link>
-            <Link to="/a-propos" onClick={() => setMobileOpen(false)}>À propos</Link>
-          </nav>
-        )}
       </div>
+
+      {/* ─── Mobile Drawer (Sheet) ─── */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-[320px] sm:w-90 p-0 flex flex-col">
+          <SheetHeader className="px-6 pt-6 pb-4 border-b border-border/30">
+            <SheetTitle className="text-left">
+              <Link
+                to="/"
+                onClick={() => setMobileOpen(false)}
+                className="text-lg font-bold tracking-[0.25em] uppercase font-serif"
+              >
+                Édène
+              </Link>
+            </SheetTitle>
+          </SheetHeader>
+
+          {/* Nav Items */}
+          <nav className="flex-1 overflow-y-auto py-4">
+            <div className="space-y-1 px-4">
+              {navigationItems.map((category) => (
+                <div key={category.label}>
+                  {/* Category header */}
+                  <button
+                    onClick={() => toggleMobileCategory(category.label)}
+                    className="w-full flex items-center justify-between px-3 py-3 text-sm font-medium uppercase tracking-wider text-foreground hover:bg-secondary/50 rounded-sm transition-colors duration-200"
+                  >
+                    {category.label}
+                    <ChevronDown
+                      className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${
+                        expandedMobile === category.label ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Expandable sub-items */}
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      expandedMobile === category.label
+                        ? "max-h-125 opacity-100"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    <div className="pl-3 pb-2 space-y-0.5">
+                      {category.groups.map((group, gIdx) => (
+                        <div key={gIdx}>
+                          {group.title && (
+                            <p className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-luxury text-muted-foreground/60">
+                              {group.title}
+                            </p>
+                          )}
+                          {group.items.map((item) => (
+                            <SheetClose key={item.label} asChild>
+                              <Link
+                                to={item.href}
+                                className="block px-3 py-2 text-sm text-foreground/75 hover:text-foreground hover:bg-secondary/40 rounded-sm transition-colors duration-200"
+                              >
+                                {item.label}
+                              </Link>
+                            </SheetClose>
+                          ))}
+                        </div>
+                      ))}
+                      {/* View all link */}
+                      <SheetClose asChild>
+                        <Link
+                          to={category.href}
+                          className="block px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground uppercase tracking-wider transition-colors duration-200"
+                        >
+                          Voir tout →
+                        </Link>
+                      </SheetClose>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Simple link */}
+              <SheetClose asChild>
+                <Link
+                  to="/a-propos"
+                  className="block px-3 py-3 text-sm font-medium uppercase tracking-wider text-foreground hover:bg-secondary/50 rounded-sm transition-colors duration-200"
+                >
+                  À propos
+                </Link>
+              </SheetClose>
+            </div>
+          </nav>
+
+          {/* Mobile drawer footer */}
+          <div className="border-t border-border/30 px-6 py-5 space-y-3">
+            <Link
+              to="/dashboard"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 text-sm text-foreground/80 hover:text-foreground transition-colors"
+            >
+              <User className="h-4 w-4" />
+              Tableau de bord
+            </Link>
+            <button className="flex items-center gap-3 text-sm text-foreground/80 hover:text-foreground transition-colors">
+              <Heart className="h-4 w-4" />
+              Mes favoris
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }

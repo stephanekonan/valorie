@@ -1,12 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import heroImg from "@/assets/hero-fashion.jpg";
+import heroImg from "@/assets/hero-fashion.png";
 import { Newsletter } from "@/components/Newsletter";
+import {
+  createFileRoute,
+  Link,
+} from "@tanstack/react-router";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
     meta: [
-      { title: "À propos — Maison Édène" },
-      { name: "description", content: "L'histoire, les valeurs et les engagements de Maison Édène, maison française de mode et cosmétique." },
+      { title: "À propos - Valorie" },
+      {
+        name: "description",
+        content:
+          "L'histoire, les valeurs et les engagements de Valorie, maison française de mode et cosmétique.",
+      },
     ],
   }),
   component: AProposPage,
@@ -15,8 +22,12 @@ export const Route = createFileRoute("/a-propos")({
 function AProposPage() {
   return (
     <div>
-      <section className="relative h-[50vh] min-h-[400px] overflow-hidden">
-        <img src={heroImg} alt="Maison Édène" className="absolute inset-0 w-full h-full object-cover" />
+      <section className="relative h-[50vh] min-h-100 overflow-hidden">
+        <img
+          src={heroImg}
+          alt="Valorie"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-foreground/30" />
         <div className="relative container mx-auto px-6 h-full flex flex-col justify-center items-center text-center text-background">
           <p className="text-xs uppercase tracking-luxury mb-3 fade-in">Notre histoire</p>
@@ -28,10 +39,13 @@ function AProposPage() {
         <p className="text-xs uppercase tracking-luxury text-muted-foreground mb-4">Depuis 2018</p>
         <h2 className="font-serif text-4xl mb-8">Une maison née à Paris</h2>
         <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-          Maison Édène voit le jour dans un petit atelier du Marais, portée par une conviction simple : la beauté ne doit jamais être ostentatoire. Elle se cultive dans le détail, le geste juste, la matière choisie.
+          Valorie voit le jour dans un petit atelier du Marais, portée par une conviction
+          simple : la beauté ne doit jamais être ostentatoire. Elle se cultive dans le détail, le
+          geste juste, la matière choisie.
         </p>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          De la création de vêtements intemporels aux formules de soin élaborées avec des laboratoires français, chaque pièce est pensée pour durer, embellir, accompagner.
+          De la création de vêtements intemporels aux formules de soin élaborées avec des
+          laboratoires français, chaque pièce est pensée pour durer, embellir, accompagner.
         </p>
       </section>
 
@@ -40,9 +54,18 @@ function AProposPage() {
           <h2 className="font-serif text-4xl text-center mb-16">Nos engagements</h2>
           <div className="grid md:grid-cols-3 gap-12 max-w-5xl mx-auto">
             {[
-              { t: "Naturel & clean", d: "Nos cosmétiques privilégient des actifs d'origine naturelle, sans ingrédients controversés." },
-              { t: "Éthique & local", d: "Une production majoritairement européenne, des partenaires choisis pour leurs valeurs." },
-              { t: "Durabilité", d: "Des matières nobles, conçues pour traverser les saisons, et des emballages éco-pensés." },
+              {
+                t: "Naturel & clean",
+                d: "Nos cosmétiques privilégient des actifs d'origine naturelle, sans ingrédients controversés.",
+              },
+              {
+                t: "Éthique & local",
+                d: "Une production majoritairement européenne, des partenaires choisis pour leurs valeurs.",
+              },
+              {
+                t: "Durabilité",
+                d: "Des matières nobles, conçues pour traverser les saisons, et des emballages éco-pensés.",
+              },
             ].map((v) => (
               <div key={v.t} className="text-center">
                 <div className="w-12 h-px bg-foreground mx-auto mb-6" />
@@ -60,10 +83,16 @@ function AProposPage() {
           Découvrez nos collections et laissez-vous inspirer par notre univers.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/mode" className="bg-primary text-primary-foreground px-8 py-4 text-xs uppercase tracking-luxury hover:opacity-90">
+          <Link
+            to="/mode"
+            className="bg-primary text-primary-foreground px-8 py-4 text-xs uppercase tracking-luxury hover:opacity-90"
+          >
             Explorer la mode
           </Link>
-          <Link to="/cosmetique" className="border border-foreground px-8 py-4 text-xs uppercase tracking-luxury hover:bg-foreground hover:text-background transition-colors">
+          <Link
+            to="/cosmetique"
+            className="border border-foreground px-8 py-4 text-xs uppercase tracking-luxury hover:bg-foreground hover:text-background transition-colors"
+          >
             Découvrir les soins
           </Link>
         </div>

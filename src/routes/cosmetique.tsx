@@ -1,13 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
+import heroImg from "@/assets/category-cosmetique.jpg";
 import { CategoryPage } from "@/components/CategoryPage";
 import { getByCategory } from "@/lib/products";
-import heroImg from "@/assets/category-cosmetique.jpg";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/cosmetique")({
   head: () => ({
     meta: [
-      { title: "Cosmétique — Maison Édène" },
-      { name: "description", content: "Soin visage, soin corps et maquillage : nos rituels beauté pour révéler votre éclat naturel." },
+      { title: "Cosmétique — Valorie" },
+      {
+        name: "description",
+        content:
+          "Soin visage, soin corps et maquillage : nos rituels beauté pour révéler votre éclat naturel.",
+      },
     ],
   }),
   component: CosmetiquePage,

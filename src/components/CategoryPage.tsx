@@ -1,65 +1,143 @@
 import { useState } from "react";
-import { ProductCard } from "./ProductCard";
+
+import { Link } from "@tanstack/react-router";
+
 import type { Product } from "@/lib/products";
+
+import { ProductCard } from "./ProductCard";
 
 type Props = {
   title: string;
   intro: string;
   heroImage: string;
-  subcategories: { id: string; label: string }[];
+  subcategories: { id: string; label: string; href?: string }[];
   products: Product[];
+  selectedColor?: string;
 };
 
-export function CategoryPage({ title, intro, heroImage, subcategories, products }: Props) {
+export function CategoryPage({
+  title,
+  intro,
+  heroImage,
+  subcategories,
+  products,
+  selectedColor,
+}: Props) {
   const [sub, setSub] = useState<string>("all");
   const filtered = sub === "all" ? products : products.filter((p) => p.subcategory === sub);
+  const prices = filtered.map((p) => p.price);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
 
   return (
     <div>
-      <section className="relative h-[40vh] min-h-[320px] overflow-hidden">
-        <img src={heroImage} alt={title} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-foreground/20" />
-        <div className="relative container mx-auto px-6 h-full flex flex-col justify-center items-center text-center text-background">
-          <h1 className="font-serif text-5xl md:text-6xl mb-3 fade-in-up">{title}</h1>
-          <p className="max-w-xl fade-in opacity-90">{intro}</p>
+
+      <section className="border-b border-border bg-background">
+        <div className="container mx-auto px-6 py-5 text-xs text-muted-foreground">
+          Accueil / Femme / <span className="text-foreground">{title}</span>
         </div>
       </section>
 
-      <section className="container mx-auto px-6 py-12">
-        <div className="flex flex-wrap gap-2 justify-center mb-10">
+      <section className="container mx-auto px-6 py-10">
+        <div className="flex flex-wrap items-center gap-2 mb-8">
           <button
             onClick={() => setSub("all")}
-            className={`px-5 py-2 text-xs uppercase tracking-luxury border transition ${
-              sub === "all" ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-foreground"
+            className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
+              sub === "all"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border bg-background hover:border-foreground"
             }`}
           >
             Tout
           </button>
           {subcategories.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setSub(s.id)}
-              className={`px-5 py-2 text-xs uppercase tracking-luxury border transition ${
-                sub === s.id ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-foreground"
-              }`}
-            >
-              {s.label}
-            </button>
+            <div key={s.id}>
+              {s.href ? (
+                <Link
+                  to={s.href}
+                  className={`inline-block px-5 py-3 text-xs uppercase tracking-luxury border transition ${
+                    sub === s.id
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border bg-background hover:border-foreground"
+                  }`}
+                >
+                  {s.label}
+                </Link>
+              ) : (
+                <button
+                  onClick={() => setSub(s.id)}
+                  className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
+                    sub === s.id
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border bg-background hover:border-foreground"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              )}
+            </div>
           ))}
         </div>
 
-        <div className="flex justify-between items-center text-sm text-muted-foreground mb-6">
-          <p>{filtered.length} article{filtered.length > 1 ? "s" : ""}</p>
-          <select className="bg-transparent border-b border-border text-xs uppercase tracking-luxury py-1 focus:outline-none">
-            <option>Tri : Pertinence</option>
-            <option>Prix croissant</option>
-            <option>Prix décroissant</option>
-            <option>Nouveautés</option>
-          </select>
-        </div>
+        <div className="grid gap-10 lg:grid-cols-[250px_1fr]">
+          <aside className="hidden lg:block">
+            <div className="sticky top-36 space-y-8 border-r border-border pr-8">
+              <div>
+                <h2 className="mb-4 text-xs uppercase tracking-luxury">Filtres</h2>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" className="accent-current" /> Nouveautés
+                  </label>
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" className="accent-current" /> Best-sellers
+                  </label>
+                  <label className="flex items-center gap-3">
+                    <input type="checkbox" className="accent-current" /> Disponible en noir
+                  </label>
+                </div>
+              </div>
+              <div>
+                <h2 className="mb-4 text-xs uppercase tracking-luxury">Prix</h2>
+                <p className="text-sm text-muted-foreground">
+                  {minPrice} € — {maxPrice} €
+                </p>
+              </div>
+              <div>
+                <h2 className="mb-4 text-xs uppercase tracking-luxury">Catégorie</h2>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  {subcategories.map((s) => (
+                    <button
+                      key={s.id}
+                      onClick={() => setSub(s.id)}
+                      className="block hover:text-foreground"
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </aside>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
+          <div>
+            <div className="flex justify-between items-center text-sm text-muted-foreground mb-6">
+              <p>
+                {filtered.length} article{filtered.length > 1 ? "s" : ""}
+              </p>
+              <select className="bg-transparent border-b border-border text-xs uppercase tracking-luxury py-2 focus:outline-none">
+                <option>Tri : Pertinence</option>
+                <option>Prix croissant</option>
+                <option>Prix décroissant</option>
+                <option>Nouveautés</option>
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10">
+              {filtered.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </div>
