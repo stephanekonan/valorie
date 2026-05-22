@@ -26,6 +26,7 @@ function RecherchePage() {
     (p) =>
       p.name.toLowerCase().includes(searchLower) ||
       p.description.toLowerCase().includes(searchLower) ||
+      p.department.toLowerCase().includes(searchLower) ||
       p.category.toLowerCase().includes(searchLower) ||
       p.subcategory.toLowerCase().includes(searchLower) ||
       p.brand.toLowerCase().includes(searchLower) ||
@@ -37,9 +38,7 @@ function RecherchePage() {
       title={`Recherche: ${q}`}
       intro={`Résultats pour "${q}"`}
       heroImage={heroImg}
-      subcategories={[
-        { id: "all", label: "Tous les résultats" },
-      ]}
+      filters={[]}
       products={filtered}
     />
   );

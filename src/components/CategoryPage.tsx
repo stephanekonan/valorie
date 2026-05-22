@@ -6,11 +6,13 @@ import type { Product } from "@/lib/products";
 
 import { ProductCard } from "./ProductCard";
 
+type Filter = { label: string; query: Record<string, string>; href?: string };
+
 type Props = {
   title: string;
   intro: string;
   heroImage: string;
-  subcategories: { id: string; label: string; href?: string }[];
+  filters?: Filter[];
   products: Product[];
   selectedColor?: string;
 };
@@ -19,26 +21,51 @@ export function CategoryPage({
   title,
   intro,
   heroImage,
-  subcategories,
+  filters = [],
   products,
   selectedColor,
 }: Props) {
   const search: any = useSearch({ strict: false });
   const navigate = useNavigate();
-  const [sub, setSub] = useState<string>(search.sub || "all");
 
-  useEffect(() => {
-    if (search.sub) {
-      setSub(search.sub);
-    }
-  }, [search.sub]);
+  const [filterNew, setFilterNew] = useState(false);
+  const [filterBestseller, setFilterBestseller] = useState(false);
+  const [filterBlack, setFilterBlack] = useState(false);
+  const [sortBy, setSortBy] = useState("pertinence");
 
-  const handleSubChange = (newSub: string) => {
-    setSub(newSub);
-    navigate({ search: { ...search, sub: newSub } as any, replace: true });
+  const handleFilterClick = (query: Record<string, string>) => {
+    navigate({ search: query as any, replace: true });
   };
 
-  const filtered = sub === "all" ? products : products.filter((p) => p.subcategory === sub);
+  const isFilterActive = (query: Record<string, string>) => {
+    if (Object.keys(query).length === 0) {
+      return !search.category && !search.subcategory && !search.gender;
+    }
+    return Object.entries(query).every(([k, v]) => search[k] === v);
+  };
+
+  const filtered = products.filter((p) => {
+    if (search.category && p.category !== search.category) return false;
+    if (search.subcategory && p.subcategory !== search.subcategory) return false;
+    if (search.gender && p.gender !== search.gender) return false;
+    if (search.color && p.colors && p.colors.indexOf(search.color.toLowerCase()) === -1) return false;
+
+    if (filterNew && p.badge !== "Nouveau") return false;
+    if (filterBestseller && p.badge !== "Bestseller") return false;
+    if (filterBlack && (!p.colors || !p.colors.some((c) => c.toLowerCase() === "noir"))) return false;
+
+    return true;
+  });
+
+  const sorted = [...filtered];
+  if (sortBy === "Prix croissant") {
+    sorted.sort((a, b) => a.price - b.price);
+  } else if (sortBy === "Prix décroissant") {
+    sorted.sort((a, b) => b.price - a.price);
+  } else if (sortBy === "Nouveautés") {
+    sorted.sort((a, b) => (a.badge === "Nouveau" ? -1 : b.badge === "Nouveau" ? 1 : 0));
+  }
+
   const prices = filtered.map((p) => p.price);
   const minPrice = prices.length ? Math.min(...prices) : 0;
   const maxPrice = prices.length ? Math.max(...prices) : 0;
@@ -48,50 +75,11 @@ export function CategoryPage({
 
       <section className="border-b border-border bg-background">
         <div className="container mx-auto px-6 py-5 text-xs text-muted-foreground">
-          Accueil / Femme / <span className="text-foreground">{title}</span>
+          Accueil / Mode / <span className="text-foreground">{title}</span>
         </div>
       </section>
 
       <section className="container mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-center gap-2 mb-8">
-          <button
-            onClick={() => handleSubChange("all")}
-            className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
-              sub === "all"
-                ? "bg-primary text-primary-foreground border-primary"
-                : "border-border bg-background hover:border-foreground"
-            }`}
-          >
-            Tout
-          </button>
-          {subcategories.map((s) => (
-            <div key={s.id}>
-              {s.href ? (
-                <Link
-                  to={s.href}
-                  className={`inline-block px-5 py-3 text-xs uppercase tracking-luxury border transition ${
-                    sub === s.id
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border bg-background hover:border-foreground"
-                  }`}
-                >
-                  {s.label}
-                </Link>
-              ) : (
-                <button
-                  onClick={() => handleSubChange(s.id)}
-                  className={`px-5 py-3 text-xs uppercase tracking-luxury border transition ${
-                    sub === s.id
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border bg-background hover:border-foreground"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
 
         <div className="grid gap-10 lg:grid-cols-[250px_1fr]">
           <aside className="hidden lg:block">
@@ -100,13 +88,13 @@ export function CategoryPage({
                 <h2 className="mb-4 text-xs uppercase tracking-luxury">Filtres</h2>
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <label className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-current" /> Nouveautés
+                    <input type="checkbox" className="accent-current" checked={filterNew} onChange={(e) => setFilterNew(e.target.checked)} /> Nouveautés
                   </label>
                   <label className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-current" /> Best-sellers
+                    <input type="checkbox" className="accent-current" checked={filterBestseller} onChange={(e) => setFilterBestseller(e.target.checked)} /> Best-sellers
                   </label>
                   <label className="flex items-center gap-3">
-                    <input type="checkbox" className="accent-current" /> Disponible en noir
+                    <input type="checkbox" className="accent-current" checked={filterBlack} onChange={(e) => setFilterBlack(e.target.checked)} /> Disponible en noir
                   </label>
                 </div>
               </div>
@@ -118,14 +106,17 @@ export function CategoryPage({
               </div>
               <div>
                 <h2 className="mb-4 text-xs uppercase tracking-luxury">Catégorie</h2>
-                <div className="space-y-2 text-sm text-muted-foreground">
-                  {subcategories.map((s) => (
+                <div className="space-y-3">
+                  {filters.map((f, i) => (
                     <button
-                      key={s.id}
-                      onClick={() => handleSubChange(s.id)}
-                      className="block hover:text-foreground"
+                      key={i}
+                      onClick={() => handleFilterClick(f.query)}
+                      className={`block w-full text-left transition-colors ${isFilterActive(f.query)
+                        ? "text-foreground font-medium"
+                        : "text-muted-foreground hover:text-foreground"
+                        }`}
                     >
-                      {s.label}
+                      {f.label}
                     </button>
                   ))}
                 </div>
@@ -136,18 +127,22 @@ export function CategoryPage({
           <div>
             <div className="flex justify-between items-center text-sm text-muted-foreground mb-6">
               <p>
-                {filtered.length} article{filtered.length > 1 ? "s" : ""}
+                {sorted.length} article{sorted.length > 1 ? "s" : ""}
               </p>
-              <select className="bg-transparent border-b border-border text-xs uppercase tracking-luxury py-2 focus:outline-none">
-                <option>Tri : Pertinence</option>
-                <option>Prix croissant</option>
-                <option>Prix décroissant</option>
-                <option>Nouveautés</option>
+              <select
+                className="bg-transparent border-b border-border text-xs uppercase tracking-luxury py-2 focus:outline-none"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+              >
+                <option value="pertinence">Tri : Pertinence</option>
+                <option value="Prix croissant">Prix croissant</option>
+                <option value="Prix décroissant">Prix décroissant</option>
+                <option value="Nouveautés">Nouveautés</option>
               </select>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10">
-              {filtered.map((p) => (
+              {sorted.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CategoryPage } from "@/components/CategoryPage";
-import { getByCategory } from "@/lib/products";
+import { getByDepartment } from "@/lib/products";
 import heroImg from "@/assets/category-mode.jpg";
 
 export const Route = createFileRoute("/mode")({
@@ -23,12 +23,12 @@ function ModePage() {
       title="Mode"
       intro="Des pièces intemporelles, des matières nobles, une coupe parfaite."
       heroImage={heroImg}
-      subcategories={[
-        { id: "femme", label: "Femme" },
-        { id: "homme", label: "Homme" },
-        { id: "accessoires", label: "Accessoires" },
+      filters={[
+        { label: "Femme", query: { gender: "femme" } },
+        { label: "Homme", query: { gender: "homme" } },
+        { label: "Accessoires", query: { category: "accessoires" } },
       ]}
-      products={getByCategory("mode")}
+      products={getByDepartment("mode")}
     />
   );
 }

@@ -302,7 +302,7 @@ export function DashboardPage() {
       productName: randomProduct.name,
       amount: randomProduct.price,
       status: randomStatus,
-      category: randomProduct.category,
+      category: randomProduct.department as "mode" | "cosmetique",
     };
 
     setOrders((prev) => [newOrder, ...prev]);

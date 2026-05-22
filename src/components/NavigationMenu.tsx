@@ -27,39 +27,24 @@ export type NavCategory = {
 
 const navigationItems: NavCategory[] = [
   {
-    label: "Femme",
-    href: "/femme",
+    label: "Mode",
+    href: "/mode",
     groups: [
       {
         title: "Vêtements",
         items: [
-          { label: "Tous les articles", href: "/femme", description: "Découvrir toute la collection" },
-          { label: "Robes", href: "/femme", search: { sub: "femme" } },
-          { label: "Tops & Chemises", href: "/femme", search: { sub: "femme" } },
-          { label: "Pantalons", href: "/femme", search: { sub: "femme" } },
+          { label: "Tous les articles", href: "/mode", description: "Découvrir toute la collection" },
+          { label: "Robes", href: "/mode", search: { category: "vetements", subcategory: "robes" } },
+          { label: "Tops & Chemises", href: "/mode", search: { category: "vetements", subcategory: "tops" } },
+          { label: "Pantalons & Joggings", href: "/mode", search: { category: "vetements", subcategory: "pantalons-joggings" } },
+          { label: "Pulls & Sweats", href: "/mode", search: { category: "vetements", subcategory: "pulls-sweats" } },
         ],
       },
       {
         title: "Sacs & Accessoires",
         items: [
           { label: "Tous les sacs", href: "/femme/sacs" },
-          { label: "Sacs Noir", href: "/sacs-femme/c/noir" },
-          { label: "Sacs Blanc", href: "/sacs-femme/c/blanc" },
-          { label: "Sacs Marron", href: "/sacs-femme/c/marron" },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Mode",
-    href: "/mode",
-    groups: [
-      {
-        items: [
-          { label: "Tous les articles", href: "/mode", description: "Explorer la collection mode" },
-          { label: "Vêtements", href: "/femme" },
-          { label: "Accessoires", href: "/mode", search: { sub: "accessoires" } },
-          { label: "Nouveautés", href: "/mode" },
+          { label: "Accessoires", href: "/mode", search: { category: "accessoires" } },
         ],
       },
     ],
@@ -71,9 +56,9 @@ const navigationItems: NavCategory[] = [
       {
         items: [
           { label: "Tous les articles", href: "/cosmetique", description: "Nos soins & cosmétiques" },
-          { label: "Soin visage", href: "/cosmetique", search: { sub: "visage" } },
-          { label: "Soin corps", href: "/cosmetique", search: { sub: "corps" } },
-          { label: "Maquillage", href: "/cosmetique", search: { sub: "maquillage" } },
+          { label: "Soin visage", href: "/cosmetique", search: { category: "visage" } },
+          { label: "Soin corps", href: "/cosmetique", search: { category: "corps" } },
+          { label: "Maquillage", href: "/cosmetique", search: { category: "maquillage" } },
         ],
       },
     ],
