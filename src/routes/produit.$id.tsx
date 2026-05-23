@@ -13,6 +13,7 @@ import { toast } from "sonner";
 
 import { ProductCard } from "@/components/ProductCard";
 import { useCart } from "@/lib/cart";
+import { useFavorites } from "@/lib/favorites";
 import {
   getProduct,
   products,
@@ -49,46 +50,48 @@ export const Route = createFileRoute("/produit/$id")({
 function ProductPage() {
   const { product } = Route.useLoaderData();
   const { addToCart } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [color, setColor] = useState(product.colors?.[0]);
   const [size, setSize] = useState(product.sizes?.[0]);
   const [qty, setQty] = useState(1);
+
+  const liked = isFavorite(product.id);
 
   const similar = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
   const reviews = [
-    {
-      author: "Camille L.",
-      rating: 5,
-      date: "il y a 2 semaines",
-      text: "Magnifique pièce, conforme à la description. La qualité est incroyable et la livraison rapide.",
-    },
-    {
-      author: "Sophie M.",
-      rating: 5,
-      date: "il y a 1 mois",
-      text: "Mon coup de cœur de la saison. Je recommande les yeux fermés.",
-    },
-    {
-      author: "Léa D.",
-      rating: 4,
-      date: "il y a 1 mois",
-      text: "Très belle qualité, je retire une étoile pour la taille un peu grande.",
-    },
+    { author: "Camille L.", rating: 5, date: "il y a 2 semaines", text: "Magnifique pièce, conforme à la description. La qualité est incroyable et la livraison rapide." },
+    { author: "Sophie M.", rating: 5, date: "il y a 1 mois", text: "Mon coup de cœur de la saison. Je recommande les yeux fermés." },
+    { author: "Léa D.", rating: 4, date: "il y a 1 mois", text: "Très belle qualité, je retire une étoile pour la taille un peu grande." },
   ];
+
+  const handleFavorite = () => {
+    toggleFavorite(product);
+    if (!liked) {
+      toast.success(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-semibold text-foreground">Ajouté aux favoris !</span>
+          <span className="text-xs text-muted-foreground">{product.name}</span>
+        </div>
+      );
+    } else {
+      toast(
+        <div className="flex flex-col gap-0.5">
+          <span className="font-semibold text-foreground">Retiré des favoris</span>
+          <span className="text-xs text-muted-foreground">{product.name}</span>
+        </div>
+      );
+    }
+  };
 
   return (
     <div>
       <div className="container mx-auto px-6 py-6 text-xs text-muted-foreground">
-        <Link to="/" className="hover:text-foreground">
-          Accueil
-        </Link>
+        <Link to="/" className="hover:text-foreground">Accueil</Link>
         <span className="mx-2">/</span>
-        <Link
-          to={product.category === "mode" ? "/mode" : "/cosmetique"}
-          className="hover:text-foreground capitalize"
-        >
+        <Link to={product.category === "mode" ? "/mode" : "/cosmetique"} className="hover:text-foreground capitalize">
           {product.category}
         </Link>
         <span className="mx-2">/</span>
@@ -101,9 +104,7 @@ function ProductPage() {
         </div>
 
         <div className="lg:py-8">
-          <p className="text-xs uppercase tracking-luxury text-muted-foreground mb-2">
-            {product.brand}
-          </p>
+          <p className="text-xs uppercase tracking-luxury text-muted-foreground mb-2">{product.brand}</p>
           <h1 className="font-serif text-4xl md:text-5xl mb-4">{product.name}</h1>
 
           <div className="flex items-center gap-3 mb-6">
@@ -126,8 +127,7 @@ function ProductPage() {
           {product.colors && (
             <div className="mb-6">
               <p className="text-xs uppercase tracking-luxury mb-3">
-                Couleur :{" "}
-                <span className="text-muted-foreground normal-case tracking-normal">{color}</span>
+                Couleur : <span className="text-muted-foreground normal-case tracking-normal">{color}</span>
               </p>
               <div className="flex gap-2">
                 {product.colors.map((c: string) => (
@@ -191,23 +191,22 @@ function ProductPage() {
               Ajouter au panier
             </button>
             <button
-              aria-label="Favoris"
-              className="border border-border px-5 hover:border-foreground"
+              aria-label={liked ? "Retirer des favoris" : "Ajouter aux favoris"}
+              onClick={handleFavorite}
+              className={`border px-5 transition-colors duration-200 ${
+                liked
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border hover:border-foreground"
+              }`}
             >
-              <Heart className="h-5 w-5" />
+              <Heart className={`h-5 w-5 ${liked ? "fill-current" : ""}`} />
             </button>
           </div>
 
           <div className="border-t border-border pt-6 space-y-3 text-sm text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <Truck className="h-4 w-4" /> Livraison offerte dès 80€
-            </div>
-            <div className="flex items-center gap-3">
-              <RefreshCw className="h-4 w-4" /> Retours gratuits sous 30 jours
-            </div>
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="h-4 w-4" /> Paiement 100% sécurisé
-            </div>
+            <div className="flex items-center gap-3"><Truck className="h-4 w-4" /> Livraison offerte dès 80€</div>
+            <div className="flex items-center gap-3"><RefreshCw className="h-4 w-4" /> Retours gratuits sous 30 jours</div>
+            <div className="flex items-center gap-3"><ShieldCheck className="h-4 w-4" /> Paiement 100% sécurisé</div>
           </div>
         </div>
       </section>
@@ -220,16 +219,11 @@ function ProductPage() {
             <article key={r.author} className="bg-secondary p-6">
               <div className="flex mb-3">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star
-                    key={i}
-                    className={`h-3 w-3 ${i <= r.rating ? "fill-foreground text-foreground" : "text-muted-foreground"}`}
-                  />
+                  <Star key={i} className={`h-3 w-3 ${i <= r.rating ? "fill-foreground text-foreground" : "text-muted-foreground"}`} />
                 ))}
               </div>
               <p className="text-sm mb-4 leading-relaxed">"{r.text}"</p>
-              <p className="text-xs uppercase tracking-luxury text-muted-foreground">
-                {r.author} · {r.date}
-              </p>
+              <p className="text-xs uppercase tracking-luxury text-muted-foreground">{r.author} · {r.date}</p>
             </article>
           ))}
         </div>

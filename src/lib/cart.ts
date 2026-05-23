@@ -104,15 +104,12 @@ export function clearCart(): void {
   saveCart([]);
 }
 
-// React hook for managing cart state
 export function useCart() {
   const [items, setItems] = useState<CartItem[]>(getCart());
 
   useEffect(() => {
-    // Sync with localStorage on mount
     setItems(getCart());
 
-    // Listen for cart updates
     const handleCartUpdate = () => {
       setItems(getCart());
     };
@@ -121,20 +118,26 @@ export function useCart() {
     return () => window.removeEventListener("cart-updated", handleCartUpdate);
   }, []);
 
+  const totalItems = items.reduce((total, item) => total + item.qty, 0);
+
   return {
     items,
+    totalItems,
     addToCart: (product: Product, qty: number, size?: string, color?: string) => {
       addToCart(product, qty, size, color);
       setItems(getCart());
     },
+
     removeFromCart: (productId: string, size?: string, color?: string) => {
       removeFromCart(productId, size, color);
       setItems(getCart());
     },
+
     updateQty: (productId: string, size: string | undefined, color: string | undefined, delta: number) => {
       updateCartItemQty(productId, size, color, delta);
       setItems(getCart());
     },
+    
     clearCart: () => {
       clearCart();
       setItems([]);

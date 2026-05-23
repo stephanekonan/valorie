@@ -14,19 +14,14 @@ export const Route = createFileRoute("/femme/sacs")({
 });
 
 function FemmeSacsPage() {
-  const filtered = products.filter((p) => p.category === "mode" && p.subcategory === "accessoires");
+  const filtered = products.filter((p) => p.department === "mode" && p.category === "sacs" && (p.gender === "femme" || p.gender === "mixte"));
 
   return (
     <CategoryPage
-      title="Sacs & accessoires"
-      intro="Découvrez notre sélection de sacs et accessoires pour femme."
+      title="Sacs"
+      intro="Découvrez notre sélection de sacs pour femme."
       heroImage={heroImg}
-      subcategories={[
-        { id: "all", label: "Tous les sacs" },
-        { id: "noir", label: "Noir", href: "/femme/sacs/c/noir" },
-        { id: "blanc", label: "Blanc", href: "/femme/sacs/c/blanc" },
-        { id: "marron", label: "Marron", href: "/femme/sacs/c/marron" },
-      ]}
+      filters={[]}
       products={filtered}
     />
   );

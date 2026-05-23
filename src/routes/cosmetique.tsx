@@ -1,6 +1,6 @@
 import heroImg from "@/assets/category-cosmetique.jpg";
 import { CategoryPage } from "@/components/CategoryPage";
-import { getByCategory } from "@/lib/products";
+import { getByDepartment } from "@/lib/products";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/cosmetique")({
@@ -23,12 +23,12 @@ function CosmetiquePage() {
       title="Cosmétique"
       intro="Des soins inspirés de la nature, pensés pour révéler votre éclat singulier."
       heroImage={heroImg}
-      subcategories={[
-        { id: "visage", label: "Soin visage" },
-        { id: "corps", label: "Soin corps" },
-        { id: "maquillage", label: "Maquillage" },
+      filters={[
+        { label: "Soin visage", query: { category: "visage" } },
+        { label: "Soin corps", query: { category: "corps" } },
+        { label: "Maquillage", query: { category: "maquillage" } },
       ]}
-      products={getByCategory("cosmetique")}
+      products={getByDepartment("cosmetique")}
     />
   );
 }

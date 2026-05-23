@@ -19,12 +19,12 @@ function FemmePage() {
       title="Femme"
       intro="Les essentiels du vestiaire féminin : silhouettes nettes, beaux volumes et accessoires du quotidien."
       heroImage={heroImg}
-      subcategories={[
-        { id: "femme", label: "Vêtements" },
-        { id: "accessoires", label: "Sacs & accessoires", href: "/femme/sacs" },
+      filters={[
+        { label: "Vêtements", query: { category: "vetements" } },
+        { label: "Sacs & accessoires", href: "/femme/sacs", query: {} },
       ]}
       products={products.filter(
-        (p) => p.category === "mode" && ["femme", "accessoires"].includes(p.subcategory),
+        (p) => p.department === "mode" && (p.gender === "femme" || p.gender === "mixte"),
       )}
     />
   );
