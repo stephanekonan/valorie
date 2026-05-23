@@ -1,7 +1,5 @@
 export default async function handler(req, res) {
   try {
-    // Import the worker handler from the built server
-    // Use relative path - dist/ and api/ are siblings in Vercel environment
     const workerModule = await import("../dist/server/server.js");
     const worker = workerModule.default;
 
@@ -9,13 +7,11 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Worker not loaded" });
     }
 
-    // Convert Node.js request to Fetch API request
     const url = new URL(
       req.url,
       `http://${req.headers.host || "localhost"}`
     );
 
-    // Prepare request body
     let body = undefined;
     if (req.method !== "GET" && req.method !== "HEAD") {
       const chunks = [];
@@ -27,22 +23,18 @@ export default async function handler(req, res) {
       }
     }
 
-    // Create fetch-compatible Request
     const fetchRequest = new Request(url.toString(), {
       method: req.method,
       headers: req.headers,
       body: body || undefined,
     });
 
-    // Call the worker handler
     const response = await worker.fetch(fetchRequest);
 
-    // Forward response headers
     response.headers.forEach((value, key) => {
       res.setHeader(key, value);
     });
 
-    // Send response
     res.status(response.status);
     const respBody = await response.arrayBuffer();
     res.send(Buffer.from(respBody));
