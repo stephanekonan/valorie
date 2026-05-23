@@ -1,7 +1,8 @@
 export default async function handler(req, res) {
   try {
     // Import the worker handler from the built server
-    const workerModule = await import("../../dist/server/server.js");
+    // Use relative path - dist/ and api/ are siblings in Vercel environment
+    const workerModule = await import("../dist/server/server.js");
     const worker = workerModule.default;
 
     if (!worker) {
