@@ -2,12 +2,6 @@
 @import "tw-animate-css";
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
 
-@source "../src";
-
-@custom-variant dark (&:is(.dark *));
-
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap");
-
 @theme inline {
   --font-serif: "Cormorant Garamond", serif;
   --font-sans: "Inter", sans-serif;
@@ -41,6 +35,10 @@
   --color-taupe: var(--taupe);
   --color-cream: var(--cream);
 }
+
+@source "../src";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --radius: 0.25rem;

@@ -19,7 +19,7 @@ import {
 export const Route = createFileRoute("/panier")({
   head: () => ({
     meta: [
-      { title: "Panier — Valorie" },
+      { title: "Panier - Valorie" },
       { name: "description", content: "Votre sélection Valorie." },
     ],
   }),

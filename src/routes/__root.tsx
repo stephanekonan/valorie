@@ -1,17 +1,20 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Footer } from "@/components/Footer";
+import { Header } from "@/components/Header";
+import { Toaster } from "@/components/ui/sonner";
 import {
-  Outlet,
-  Link,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import {
   createRootRouteWithContext,
-  useRouter,
   HeadContent,
+  Link,
+  Outlet,
   Scripts,
+  useRouter,
 } from "@tanstack/react-router";
 
 import appCss from "../styles.css?url";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -77,7 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Mode et cosmétique d'inspiration parisienne." },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.ico" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -104,7 +110,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen flex flex-col">
-        <Toaster position="top-right" richColors />
+        <Toaster position="bottom-right" richColors />
         <Header />
         <main className="flex-1">
           <Outlet />
