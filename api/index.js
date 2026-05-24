@@ -3,13 +3,14 @@ export default async function handler(req, res) {
     const workerModule = await import("../dist/server/server.js");
     const worker = workerModule.default;
 
-    if (!worker) {
-      return res.status(500).json({ error: "Worker not loaded" });
+    if (!worker || typeof worker.fetch !== "function") {
+      res.status(500).send("Worker module not loaded or missing fetch handler");
+      return;
     }
 
     const url = new URL(
       req.url,
-      `http://${req.headers.host || "localhost"}`
+      `https://${req.headers.host || "localhost"}`
     );
 
     let body = undefined;
@@ -23,26 +24,37 @@ export default async function handler(req, res) {
       }
     }
 
+    const headers = new Headers();
+    for (const [key, value] of Object.entries(req.headers)) {
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          for (const v of value) headers.append(key, v);
+        } else {
+          headers.set(key, value);
+        }
+      }
+    }
+
     const fetchRequest = new Request(url.toString(), {
       method: req.method,
-      headers: req.headers,
-      body: body || undefined,
+      headers,
+      body: body ?? undefined,
     });
 
-    const response = await worker.fetch(fetchRequest);
+    const response = await worker.fetch(fetchRequest, {}, {});
 
-    response.headers.forEach((value, key) => {
+    for (const [key, value] of response.headers.entries()) {
       res.setHeader(key, value);
-    });
+    }
 
     res.status(response.status);
     const respBody = await response.arrayBuffer();
-    res.send(Buffer.from(respBody));
+    res.end(Buffer.from(respBody));
   } catch (error) {
     console.error("Server error:", error);
     res.status(500).json({
       error: "Internal Server Error",
-      message: error.message
+      message: error instanceof Error ? error.message : String(error),
     });
   }
 }

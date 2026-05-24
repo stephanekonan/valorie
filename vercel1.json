@@ -1,6 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/client",
   "installCommand": "npm install",
   "env": {
     "NODE_ENV": "production"
@@ -8,17 +7,17 @@
   "functions": {
     "api/index.js": {
       "memory": 1024,
-      "maxDuration": 30,
-      "includeFiles": "dist/server/**"
+      "maxDuration": 30
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "handle": "filesystem"
+      "source": "/assets/:path*",
+      "destination": "/dist/client/assets/:path*"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/(.*)",
+      "destination": "/api"
     }
   ]
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   useCallback,
   useEffect,
@@ -21,9 +22,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Link, useNavigate } from "@tanstack/react-router";
 import { useCart } from "@/lib/cart";
 import { useFavorites } from "@/lib/favorites";
+import {
+  Link,
+  useNavigate,
+} from "@tanstack/react-router";
 
 import {
   navigationItems,
@@ -71,7 +75,7 @@ export function Header() {
       {/* ─── Promo Banner ─── */}
       <div className="bg-foreground text-background overflow-hidden">
         <div className="container mx-auto px-6 py-2 text-center text-[10.5px] tracking-[0.18em] uppercase font-medium">
-          Livraison offerte dès 80€ — Retours gratuits sous 30 jours
+          Livraison offerte dès 80€ - Retours gratuits sous 30 jours
         </div>
       </div>
 
