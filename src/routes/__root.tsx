@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { Toaster } from "@/components/ui/sonner";
@@ -13,6 +15,7 @@ import {
   Scripts,
   useRouter,
 } from "@tanstack/react-router";
+import { inject } from "@vercel/analytics";
 
 import appCss from "../styles.css?url";
 
@@ -107,6 +110,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    inject();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen flex flex-col">
@@ -120,3 +126,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
